@@ -1,0 +1,96 @@
+clear;
+fileID = fopen('C:\Users\hvarg\Desktop\ESF\ESF\descriptor.txt', 'rb'); %, 'ieee-le'); %scene
+if fileID == -1, error('Cannot open file: %s', filename); end
+DataModel = fread(fileID, Inf,'double');
+fclose(fileID);
+
+fileID = fopen('C:\Users\hvarg\Desktop\ESF\ESF\descriptor_scene.txt', 'rb'); %, 'ieee-le'); %scene
+if fileID == -1, error('Cannot open file: %s', filename); end
+DataScene = fread(fileID, Inf,'double');
+fclose(fileID);
+
+classApple=0;
+classBanana=0;
+classBottle=0;
+classBowl=0;
+classCar=0;
+classDonut=0;
+classHammer=0;
+classMug=0;
+classTetraPak=0;
+
+nviews=42;
+nModels=351;
+ndescriptor = size(DataModel,1);
+
+nperview=ndescriptor/nviews/nModels;
+
+k=size(DataScene,1)/640;
+
+for j=0:k-1
+    iview=1;
+    Scena=DataScene(j*640+1:j*640+640);
+    
+for i=0:(nModels*nviews)-1
+    
+    DataView=DataModel(i*nperview+1:i*nperview+nperview);
+    cost=sum((DataView(:)- Scena(:)).^2);
+    
+    if i==0
+        costmin=cost;
+        iviewmin=iview;
+    end
+    if cost<=costmin
+        costmin=cost;
+        iviewmin=iview;
+        Databest=DataView;
+    end
+    iview=iview+1;
+    
+end
+    if (iviewmin>=1) && (iviewmin<=504)
+        classApple=classApple+1;
+        %disp('Apple')
+    end
+    if (iviewmin>=505)&&(iviewmin<=756)
+        classBanana=classBanana+1;
+        %disp('Banana')
+    end
+    if (iviewmin>=757)&&(iviewmin<=3864)
+        classBottle=classBottle+1;
+       %disp('Bottle')
+    end
+    if (iviewmin>=3865)&&(iviewmin<=5166)
+        classBowl=classBowl+1;
+       % disp('Bowl')
+    end
+    if(iviewmin>=5167)&&(iviewmin<=8190)
+        classCar=classCar+1;
+       % disp('Car')
+    end
+    if(iviewmin>=8191)&&(iviewmin<=8610)
+        classDonut=classDonut+1;
+       % disp('Donut')
+    end
+    if(iviewmin>=8611)&&(iviewmin<=10122)
+        classHammer=classHammer+1;
+       % disp('Hammer')
+    end
+    if(iviewmin>=10123)&&(iviewmin<=13272)
+        classMug=classMug+1;
+       % disp('Mug')
+    end
+    if(iviewmin>=13273)&&(iviewmin<=14364)
+        classTetraPak=classTetraPak+1;
+       % disp('Tetra pak')
+    end
+    if(iviewmin>=14365)&&(iviewmin<=14742)
+        classToiletPaper=classToiletPaper+1;
+      %  disp('Toilet paper')
+    end
+end
+
+plot(Scena, 'r');
+hold on;
+plot(Databest, 'b');
+
